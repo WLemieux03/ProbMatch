@@ -1,7 +1,7 @@
 require(reshape2)
 require(dplyr)
 
-prob.match <- function(X, N, Y=NULL, avail=1, match='10/10', title=NULL){
+prob.match <- function(X, N, Y=NULL, avail=1, match='10/10', twoSides=T){
   i=1; blnk=T; while(blnk){L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[i,1], '~'))); blnk <- "blank" %in% L; i<-i+1}
   #L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[1,1], '~')))
   X <- cbind(colsplit(X$alleles, '~', L), freq=X[,2])
