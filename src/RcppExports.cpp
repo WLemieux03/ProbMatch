@@ -11,22 +11,35 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // mismatches
-int mismatches(NumericVector hh, NumericVector y, int m, bool twoSide);
-RcppExport SEXP _ProbMatch_mismatches(SEXP hhSEXP, SEXP ySEXP, SEXP mSEXP, SEXP twoSideSEXP) {
+int mismatches(NumericVector hh, NumericVector y, int m, bool twoSides);
+RcppExport SEXP _ProbMatch_mismatches(SEXP hhSEXP, SEXP ySEXP, SEXP mSEXP, SEXP twoSidesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type hh(hhSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< bool >::type twoSide(twoSideSEXP);
-    rcpp_result_gen = Rcpp::wrap(mismatches(hh, y, m, twoSide));
+    Rcpp::traits::input_parameter< bool >::type twoSides(twoSidesSEXP);
+    rcpp_result_gen = Rcpp::wrap(mismatches(hh, y, m, twoSides));
+    return rcpp_result_gen;
+END_RCPP
+}
+// partmm
+int partmm(NumericVector hh, NumericVector y, int m);
+RcppExport SEXP _ProbMatch_partmm(SEXP hhSEXP, SEXP ySEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type hh(hhSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(partmm(hh, y, m));
     return rcpp_result_gen;
 END_RCPP
 }
 // matchlk
-double matchlk(NumericVector hh, NumericMatrix y, NumericVector Y, int n, int m, int lmt);
-RcppExport SEXP _ProbMatch_matchlk(SEXP hhSEXP, SEXP ySEXP, SEXP YSEXP, SEXP nSEXP, SEXP mSEXP, SEXP lmtSEXP) {
+double matchlk(NumericVector hh, NumericMatrix y, NumericVector Y, int n, int m, int lmt, bool twoSides);
+RcppExport SEXP _ProbMatch_matchlk(SEXP hhSEXP, SEXP ySEXP, SEXP YSEXP, SEXP nSEXP, SEXP mSEXP, SEXP lmtSEXP, SEXP twoSidesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,13 +49,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type lmt(lmtSEXP);
-    rcpp_result_gen = Rcpp::wrap(matchlk(hh, y, Y, n, m, lmt));
+    Rcpp::traits::input_parameter< bool >::type twoSides(twoSidesSEXP);
+    rcpp_result_gen = Rcpp::wrap(matchlk(hh, y, Y, n, m, lmt, twoSides));
     return rcpp_result_gen;
 END_RCPP
 }
 // donorlk
-double donorlk(NumericMatrix x, NumericVector X, NumericMatrix y, NumericVector Y, int nx, int ny, int m, int lmt, double avail, int N);
-RcppExport SEXP _ProbMatch_donorlk(SEXP xSEXP, SEXP XSEXP, SEXP ySEXP, SEXP YSEXP, SEXP nxSEXP, SEXP nySEXP, SEXP mSEXP, SEXP lmtSEXP, SEXP availSEXP, SEXP NSEXP) {
+double donorlk(NumericMatrix x, NumericVector X, NumericMatrix y, NumericVector Y, int nx, int ny, int m, int lmt, double avail, int N, bool twoSides);
+RcppExport SEXP _ProbMatch_donorlk(SEXP xSEXP, SEXP XSEXP, SEXP ySEXP, SEXP YSEXP, SEXP nxSEXP, SEXP nySEXP, SEXP mSEXP, SEXP lmtSEXP, SEXP availSEXP, SEXP NSEXP, SEXP twoSidesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,15 +70,86 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type lmt(lmtSEXP);
     Rcpp::traits::input_parameter< double >::type avail(availSEXP);
     Rcpp::traits::input_parameter< int >::type N(NSEXP);
-    rcpp_result_gen = Rcpp::wrap(donorlk(x, X, y, Y, nx, ny, m, lmt, avail, N));
+    Rcpp::traits::input_parameter< bool >::type twoSides(twoSidesSEXP);
+    rcpp_result_gen = Rcpp::wrap(donorlk(x, X, y, Y, nx, ny, m, lmt, avail, N, twoSides));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mismatchesOpt
+int mismatchesOpt(NumericVector hh, NumericVector y, int m, bool twoSides);
+RcppExport SEXP _ProbMatch_mismatchesOpt(SEXP hhSEXP, SEXP ySEXP, SEXP mSEXP, SEXP twoSidesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type hh(hhSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< bool >::type twoSides(twoSidesSEXP);
+    rcpp_result_gen = Rcpp::wrap(mismatchesOpt(hh, y, m, twoSides));
+    return rcpp_result_gen;
+END_RCPP
+}
+// partmmOpt
+int partmmOpt(NumericVector hh, NumericVector y, int m);
+RcppExport SEXP _ProbMatch_partmmOpt(SEXP hhSEXP, SEXP ySEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type hh(hhSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(partmmOpt(hh, y, m));
+    return rcpp_result_gen;
+END_RCPP
+}
+// matchlkOpt
+double matchlkOpt(NumericVector hh, NumericMatrix y, NumericVector Y, int n, int m, int lmt, bool twoSides);
+RcppExport SEXP _ProbMatch_matchlkOpt(SEXP hhSEXP, SEXP ySEXP, SEXP YSEXP, SEXP nSEXP, SEXP mSEXP, SEXP lmtSEXP, SEXP twoSidesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type hh(hhSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type lmt(lmtSEXP);
+    Rcpp::traits::input_parameter< bool >::type twoSides(twoSidesSEXP);
+    rcpp_result_gen = Rcpp::wrap(matchlkOpt(hh, y, Y, n, m, lmt, twoSides));
+    return rcpp_result_gen;
+END_RCPP
+}
+// donorlkOpt
+double donorlkOpt(NumericMatrix x, NumericVector X, NumericMatrix y, NumericVector Y, int nx, int ny, int m, int lmt, double avail, int N, bool twoSides);
+RcppExport SEXP _ProbMatch_donorlkOpt(SEXP xSEXP, SEXP XSEXP, SEXP ySEXP, SEXP YSEXP, SEXP nxSEXP, SEXP nySEXP, SEXP mSEXP, SEXP lmtSEXP, SEXP availSEXP, SEXP NSEXP, SEXP twoSidesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< int >::type nx(nxSEXP);
+    Rcpp::traits::input_parameter< int >::type ny(nySEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type lmt(lmtSEXP);
+    Rcpp::traits::input_parameter< double >::type avail(availSEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< bool >::type twoSides(twoSidesSEXP);
+    rcpp_result_gen = Rcpp::wrap(donorlkOpt(x, X, y, Y, nx, ny, m, lmt, avail, N, twoSides));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_ProbMatch_mismatches", (DL_FUNC) &_ProbMatch_mismatches, 4},
-    {"_ProbMatch_matchlk", (DL_FUNC) &_ProbMatch_matchlk, 6},
-    {"_ProbMatch_donorlk", (DL_FUNC) &_ProbMatch_donorlk, 10},
+    {"_ProbMatch_partmm", (DL_FUNC) &_ProbMatch_partmm, 3},
+    {"_ProbMatch_matchlk", (DL_FUNC) &_ProbMatch_matchlk, 7},
+    {"_ProbMatch_donorlk", (DL_FUNC) &_ProbMatch_donorlk, 11},
+    {"_ProbMatch_mismatchesOpt", (DL_FUNC) &_ProbMatch_mismatchesOpt, 4},
+    {"_ProbMatch_partmmOpt", (DL_FUNC) &_ProbMatch_partmmOpt, 3},
+    {"_ProbMatch_matchlkOpt", (DL_FUNC) &_ProbMatch_matchlkOpt, 7},
+    {"_ProbMatch_donorlkOpt", (DL_FUNC) &_ProbMatch_donorlkOpt, 11},
     {NULL, NULL, 0}
 };
 

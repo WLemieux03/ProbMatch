@@ -89,21 +89,3 @@ donorlkR <- function(hh, Y, sel, lmt){
   return(p)
 }
 
-
-#EG CRA=12 & 8/8; 40:2.6%, 200:11.6%, 1000:37.3%, 5000:67.2%
-#EG CRA=12 & 10/10; 1000:34.5%
-
-#EG CRA=01 ds 01, avail=1; 1223:42.78%
-#EG CRA=01 ds 02, avail=1; 1724:20.48%
-#EG CRA=01 ds 03, avail=1; 4678:28.96%
-#EG CRA=01 ds 04, avail=1; 1693:
-#EG CRA=01 ds 05, avail=1; 2062:
-#EG CRA=01 ds 06, avail=1; 12789:35.68%
-#EG CRA=01 ds 07, avail=1; 2480:
-#EG CRA=01 ds 08, avail=1; 914:17.57%
-#EG CRA=01 ds 12, avail=1; 2674:
-#EG CRA=01 ds 13, avail=1; 2735:
-#EG CRA=01 ds 14, avail=1; 3240:
-#EG CRA=01 ds 15, avail=1; 3903:
-#EG CRA=01 ds 16, avail=1; 9906:
-#EG CRA=01 ds 17, avail=1; 1555:
