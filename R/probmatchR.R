@@ -2,12 +2,16 @@ require(reshape2)
 require(dplyr)
 require(foreach)
 
-cross.find <- function(h1, N, h2=NULL, col1=NULL, col2=NULL,  avail=1, match='10/10', verbose=F){
+###########################################
+#'@export
+###########################################
+cross.findR <- function(h1, N, h2=NULL, col1=NULL, col2=NULL,  avail=1, match='10/10', verbose=F){
   if(is.null(h2)){
     h2 <- h1
   }
   if (length(N)==1){
     N <- rep(N, length(colnames(h2)[-1]))
+    names(N) <- colnames(h2)[-1]
   }
   if (!is.null(col2) & length(col2)==1){
     K <- foreach(cra=colnames(h2)[-1], .combine = cbind) %do% {
@@ -21,17 +25,30 @@ cross.find <- function(h1, N, h2=NULL, col1=NULL, col2=NULL,  avail=1, match='10
     if (is.null(col1)){
       col1 <- colnames(h1)[-1]
     }
-    K <- foreach(CRA=col1, .combine = rbind) %:% foreach(cra=col2, .combine = cbind) %do% {
-      prob.matchR(h1[,c('alleles',CRA)], N[cra], h2[,c('alleles',cra)], avail=avail, match=match, verbose = verbose, title=paste0(CRA,"<-",cra))
+    if(length(col1)>1){
+      K <- foreach(CRA=col1, .combine = rbind) %:% foreach(cra=col2, .combine = cbind) %do% {
+        prob.matchR(h1[,c('alleles',CRA)], N[cra], h2[,c('alleles',cra)], avail=avail, match=match, verbose = verbose, title=paste0(CRA,"<-",cra))
+      }
+      rownames(K) <- col1
+      colnames(K) <- col2
+    } else {
+      CRA=col1
+      K <- foreach(cra=col2, .combine = c) %do% {
+        prob.matchR(h1[,c('alleles',CRA)], N[cra], h2[,c('alleles',cra)], avail=avail, match=match, verbose = verbose, title=paste0(CRA,"<-",cra))
+      }
+      names(K) <- col2
     }
-    rownames(K) <- col1
-    colnames(K) <- col2
   }
   return(K)
 }
+for(i in 1:10){x[i,] <- apply(x_test[,-9], 1, function(x){MMcomp(x_test[i,-9], x,"both")})}
 
-#X=h6l_PN[,c('alleles',CRA)]; N=1000;Y= h6l[,c('alleles',cra)]; avail=0.7
-prob.matchR <- function(X, N, Y=NULL, avail=1, match='10/10', verbose=F, title=NULL){
+###########################################
+#'@export
+###########################################
+prob.matchR <- function(X, N, Y=NULL, avail=1, match='8/8', verbose=F, title=NULL){
+  require(reshape2)
+  require(dplyr)
   i=1; blnk=T; while(blnk){L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[i,1], '~'))); blnk <- "blank" %in% L; i<-i+1}
   #L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[1,1], '~')))
   X <- cbind(colsplit(X$alleles, '~', L), freq=X[,2])
@@ -74,14 +91,11 @@ donorlkR <- function(hh, Y, sel, lmt){
   n <- dim(Y)[1]
   if (n==0){return(0)}
   for(i in 1:n){
-    #if(){next}
     hi <- Y[i,'freq']
     for (j in i:n){
       k <- 1+(i!=j)
       hj <- Y[j,'freq']
-      w <- match(unlist(Y[c(i),sel]), hh)
-      w <- c(w,match(unlist(Y[c(j),sel]), hh[-w[!is.na(w)]]))
-      w <- sum(is.na(w))<=lmt
+      w <- (MMcomp(hh, unlist(Y[c(i,j), sel]), "both")<=lmt)*1
       p <- p + k*hi*hj*w
     }
   }
