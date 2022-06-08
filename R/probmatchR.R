@@ -41,7 +41,6 @@ cross.findR <- function(h1, N, h2=NULL, col1=NULL, col2=NULL,  avail=1, match='1
   }
   return(K)
 }
-for(i in 1:10){x[i,] <- apply(x_test[,-9], 1, function(x){MMcomp(x_test[i,-9], x,"both")})}
 
 ###########################################
 #'@export
