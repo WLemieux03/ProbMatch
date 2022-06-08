@@ -1,7 +1,7 @@
 Package: ProbMatch
 Type: Package
 Title: Faster subroutine for allele matching
-Version: 1.0.1
+Version: 1.0.2
 Date: 2022-06-08
 Authors@R: c(person("William","Lemieux",role=c("aut","cre"),email="william.lemieux@hema-quebec.qc.ca"),
             c(person("Antoine", "Lewin", role=c("ctb"))))
@@ -16,3 +16,5 @@ LazyData: true
 Imports: Rcpp (>= 1.0.7), reshape2, dplyr
 LinkingTo: Rcpp
 RoxygenNote: 7.2.0
+Depends: 
+    R (>= 2.10)
