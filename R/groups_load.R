@@ -5,7 +5,7 @@ group_load <- function(grp=c("p", "g"), twofield=T, forceG2f=F, pth=NULL){
   grp <- match.arg(grp)
 
   if(is.null(pth)){
-    pth <- system.file("extdata", paste0("extdata/hla_nom_", grp, ".txt"), package = "ProbMatch")
+    pth <- system.file(paste0("extdata/hla_nom_", grp, ".txt"), package = "ProbMatch")
     if(pth==""){stop()}
   }
   print(pth)
