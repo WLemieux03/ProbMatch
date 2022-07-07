@@ -27,14 +27,14 @@ match.likelihood <- function(hh, Y, lmt, dict, freq, covlkl=NULL, mmdir=c("both"
 }
 
 
-MMcomp <- function(p, d, type=c("both", "patient", "donor")){
+MMcomp <- function(p, d, type=c("both", "GvH", "HvG")){
   if(length(p)!=length(d)){stop("not same number of loci!")}
   type <- match.arg(type, several.ok=T)
-  mp <- pairsum(!p %in% d)
-  md <- pairsum(!d %in% p)
+  mp <- pairsum(!p %in% d & !is.na(p))
+  md <- pairsum(!d %in% p & !is.na(d))
   mm <- pairmax(mp, md)
   res <- c(sum(mm), sum(mp), sum(md))
-  names(res) <- c("both", "patient", "donor")
+  names(res) <- c("both", "GvH", "HvG")
   return(res[type])
 }
 
@@ -75,7 +75,7 @@ expandDonor <- function(X, dict, freq, CRA=c("mean", "CRA"), simplify=T){
   if(CRA=="mean" | is.na(X$CRA)){
     P <- lapply(freq, function(x){apply(x, 1, mean)})
   } else if(CRA=="CRA"){
-    P <- lapply(freq, function(x){x[,X$CRA]})
+    P <- lapply(freq, function(x){tmp <- x[,X$CRA]; names(tmp) <- rownames(x); tmp})
   }
   temp <- P[[1]]
   for (i in 2:length(P)){
@@ -131,10 +131,19 @@ expandMaxLk <- function(X, dict, freq, CRA=c("mean", "CRA")){
 }
 
 
-expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95){
+expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
   if(!is.numeric(thr) | thr<=0 | thr>1){stop("Likelihood threshold must be a value between ]0, 1]")}
   CRA <- match.arg(CRA)
   y <- expandDonor(X, dict, freq, CRA)
+
+  if(!is.null(grp)){
+    y$tmat <- apply(y$tmat, c(1,2), function(x){if(x %in% unlist(grp) & !grepl("\\d{2,4}:\\d{2,4}N", x)){names(grp)[which(sapply(grp, function(y){x %in% y}))]}else{x}})
+    temp <- data.frame(y$tmat, "p"=y$p)
+    temp <- as.data.frame(summarise_at(group_by(temp[,c(colnames(y$tmat),'p')], temp[,colnames(y$tmat)]), vars(p), ~ sum(.,na.rm=TRUE)))
+    y$tmat <- temp[,colnames(y$tmat)]
+    y$p <- temp[,"p"]
+
+  }
 
   yp <- sort(y$p, T)
   ym <- yp[min(which(cumsum(yp)>=thr))]
@@ -148,9 +157,9 @@ expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95){
 }
 
 
-compileMostLk <- function(Y, dict, freq, CRA=c("mean", "CRA"), thr=0.95){
+compileMostLk <- function(Y, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
   require(foreach)
-  temp <- foreach(x=1:dim(Y)[1], .combine=rbind) %do% {y <- expandMostLk(Y[x,], dict, freq, CRA=CRA, thr=thr); cbind("IND"=Y[x,"IND"], y$tmat,"p"=y$p)}
+  temp <- foreach(x=1:dim(Y)[1], .combine=rbind) %do% {y <- expandMostLk(Y[x,], dict, freq, CRA=CRA, thr=thr, grp=grp); cbind("IND"=Y[x,"IND"], y$tmat,"p"=y$p)}
   y <- list()
   y$IND <- temp$IND
   y$tmat <- apply(temp[,setdiff(colnames(temp), c("IND","p"))], c(1,2), as.character)
