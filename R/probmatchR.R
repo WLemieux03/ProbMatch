@@ -46,8 +46,10 @@ cross.findR <- function(h1, N, h2=NULL, col1=NULL, col2=NULL,  avail=1, match='1
 #'@export
 ###########################################
 prob.matchR <- function(X, N, Y=NULL, avail=1, match='8/8', verbose=F, title=NULL){
+  tm <- Sys.time()
   require(reshape2)
   require(dplyr)
+
   i=1; blnk=T; while(blnk){L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[i,1], '~'))); blnk <- "blank" %in% L; i<-i+1}
   #L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[1,1], '~')))
   X <- cbind(colsplit(X$alleles, '~', L), freq=X[,2])
@@ -68,10 +70,12 @@ prob.matchR <- function(X, N, Y=NULL, avail=1, match='8/8', verbose=F, title=NUL
               if(!is.null(title)){cat(title)}}
 
   P <- 0
+  ni <- 0
   for(i in 1:n){
     hi <- X[i,'freq']
     for (j in i:n){
-      if(verbose){setTxtProgressBar(progressbar, value = i*(2*n-1-i)/2+j)}
+      ni <- ni+1
+      if(verbose){setTxtProgressBar(progressbar, value = ni)}
       k <- 1+(i!=j)
       hj <- X[j,'freq']
       hh <- unlist(X[c(i,j), sel])
@@ -79,7 +83,7 @@ prob.matchR <- function(X, N, Y=NULL, avail=1, match='8/8', verbose=F, title=NUL
       P <- P + k*hi*hj*(1-(1-p)^(avail*N))
     }
   }
-  if(verbose){close(progressbar)}
+  if(verbose){close(progressbar); print(Sys.time()-tm)}
   return(P)
 }
 

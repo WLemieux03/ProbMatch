@@ -48,11 +48,11 @@ find.donors <- function(X, Y, dict, freq, match='8/8', verbose=F, title=NULL, co
 #'@export
 ###########################################
 find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both", "HvG"), verbose=F, title=NULL, CRA=c("mean", "CRA"), covlkl=0.95, grp=NULL){
+  tm <- Sys.time()
   require(reshape2)
   require(dplyr)
   match.arg(type)
 
-  tm <- Sys.time()
   i=1; blnk=T; while(blnk){L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[i,1], '~')));
   blnk <- "blank" %in% L; i<-i+1}
   #L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[1,1], '~')))
@@ -64,7 +64,7 @@ find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both
                 '12'=c('A','B','C','DRB1','DQB1','DPB1'))
   X <- as.data.frame(summarise_at(group_by(X[,c(sel,'freq')], X[,sel]), vars(freq), ~ sum(.,na.rm=TRUE)))
   if(!is.null(grp)){
-    X[,sel] <- apply(X[,sel], c(1,2), function(x){if(x %in% unlist(grp) & !grepl("\\d{2,4}:\\d{2,4}N", x)){names(grp)[which(sapply(grp, function(y){x %in% y}))]}else{x}})
+    X[,sel] <- as.data.frame(apply(X[,sel], c(1,2), function(x){if(x %in% unlist(grp) & !grepl("\\d{2,4}:\\d{2,4}N", x)){names(grp)[which(sapply(grp, function(y){x %in% y}))]}else{x}}))
     X <- as.data.frame(summarise_at(group_by(X[,c(sel,'freq')], X[,sel]), vars(freq), ~ sum(.,na.rm=TRUE)))
   }
 
@@ -75,9 +75,11 @@ find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both
   if(!is.null(title)){cat(title)}}
 
   P <- 0
+  ni <- 0
   for(i in 1:n){
     hi <- X[i,'freq']
     for (j in i:n){
+      ni <- ni+1
       k <- 1+(i!=j)
       hj <- X[j,'freq']
       hh <- unlist(X[c(i,j), sel])
@@ -90,8 +92,8 @@ find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both
       p <- 1-prod(1-as.data.frame(summarise_at(group_by(temp, temp$IND), vars(p), ~ sum(.,na.rm=TRUE)))$p)
 
       P <- P + k*hi*hj*p
-      tt <- (i-1)*(n)-ifelse(i==1, 0, factorial(i-1))+j-i+1
-      if(verbose){setTxtProgressBar(progressbar, value = tt)}
+
+      if(verbose){setTxtProgressBar(progressbar, value = ni)}
     }
   }
   if(verbose){close(progressbar); print(Sys.time()-tm)}

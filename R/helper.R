@@ -130,7 +130,9 @@ expandMaxLk <- function(X, dict, freq, CRA=c("mean", "CRA")){
   return(y)
 }
 
-
+###########################################
+#'@export
+###########################################
 expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
   if(!is.numeric(thr) | thr<=0 | thr>1){stop("Likelihood threshold must be a value between ]0, 1]")}
   CRA <- match.arg(CRA)
@@ -156,7 +158,9 @@ expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL
   return(y)
 }
 
-
+###########################################
+#'@export
+###########################################
 compileMostLk <- function(Y, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
   require(foreach)
   temp <- foreach(x=1:dim(Y)[1], .combine=rbind) %do% {y <- expandMostLk(Y[x,], dict, freq, CRA=CRA, thr=thr, grp=grp); cbind("IND"=Y[x,"IND"], y$tmat,"p"=y$p)}

@@ -47,6 +47,13 @@ merge_g_2field <- function(Ggrp){
   for (u in uname){
     ggrp[[u]] <- sort(unique(unlist(Ggrp[which(mname==u)])))
   }
+  tg <- table(unlist(ggrp))
+  tg <- tg[tg!=1]
+  TG <- unique(lapply(names(tg),function(x){names(ggrp)[which(sapply(ggrp, function(y){x %in% y}))]}))
+  for (i in TG){
+    ggrp[[i[1]]] <- sort(unique(unlist(ggrp[i])))
+    ggrp[[i[-1]]] <- NULL
+  }
   return(ggrp)
 }
 
