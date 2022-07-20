@@ -1,7 +1,7 @@
 ###########################################
 #'@export
 ###########################################
-find.donors <- function(X, Y, dict, freq, match='8/8', verbose=F, title=NULL, covlkl=NULL){
+find.donors <- function(X, Y, dict, freq, match='8/8', verbose=F, title=NULL, thr=NULL){
   require(reshape2)
   require(dplyr)
   tm <- Sys.time()
@@ -33,7 +33,7 @@ find.donors <- function(X, Y, dict, freq, match='8/8', verbose=F, title=NULL, co
       hh <- unlist(X[c(i,j), sel])
       Yfilt <- which(sapply(A, function(a){sum(!hh %in% a)<=lmt}))
       if(length(Yfilt)==0){next}
-      p <- match.likelihood(hh, Y[Yfilt,], lmt, dict, freq, covlkl)
+      p <- match.likelihood(hh, Y[Yfilt,], lmt, dict, freq, thr)
       P <- P + k*hi*hj*p
       tt <- (i-1)*(n)-ifelse(i==1, 0, factorial(i-1))+j-i+1
       if(verbose){setTxtProgressBar(progressbar, value = tt)}
@@ -47,7 +47,7 @@ find.donors <- function(X, Y, dict, freq, match='8/8', verbose=F, title=NULL, co
 ###########################################
 #'@export
 ###########################################
-find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both", "HvG"), verbose=F, title=NULL, CRA=c("mean", "CRA"), covlkl=0.95, grp=NULL){
+find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both", "HvG"), verbose=F, title=NULL, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
   tm <- Sys.time()
   require(reshape2)
   require(dplyr)
@@ -68,7 +68,7 @@ find.donorsMostLk <- function(X, Y, dict, freq, match='8/8', type=c("GvH", "both
     X <- as.data.frame(summarise_at(group_by(X[,c(sel,'freq')], X[,sel]), vars(freq), ~ sum(.,na.rm=TRUE)))
   }
 
-  y <- compileMostLk(Y, dict, freq, CRA=CRA, thr=covlkl, grp=grp)
+  y <- compileMostLk(Y, dict, freq, CRA=CRA, thr=thr, grp=grp)
 
   n <- dim(X)[1]
   if(verbose){progressbar <- txtProgressBar(max=(n^2+n)/2, style=3)

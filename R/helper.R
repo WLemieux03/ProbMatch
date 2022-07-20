@@ -26,10 +26,17 @@ match.likelihood <- function(hh, Y, lmt, dict, freq, covlkl=NULL, mmdir=c("both"
   return(1-q)
 }
 
-
-MMcomp <- function(p, d, type=c("both", "GvH", "HvG")){
+###########################################
+#'@export
+###########################################
+MMcomp <- function(p, d, type=c("both", "GvH", "HvG"), ignore.null=T){
   if(length(p)!=length(d)){stop("not same number of loci!")}
   type <- match.arg(type, several.ok=T)
+  if(ignore.null){
+    p[grepl("\\d{2,4}:\\d{2,4}N", p)] <- NA
+    d[grepl("\\d{2,4}:\\d{2,4}N", d)] <- NA
+  }
+
   mp <- pairsum(!p %in% d & !is.na(p))
   md <- pairsum(!d %in% p & !is.na(d))
   mm <- pairmax(mp, md)
@@ -134,7 +141,7 @@ expandMaxLk <- function(X, dict, freq, CRA=c("mean", "CRA")){
 #'@export
 ###########################################
 expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
-  if(!is.numeric(thr) | thr<=0 | thr>1){stop("Likelihood threshold must be a value between ]0, 1]")}
+  if(!is.numeric(thr) | thr<0 | thr>1){stop("Likelihood threshold must be a value between [0, 1]")}
   CRA <- match.arg(CRA)
   y <- expandDonor(X, dict, freq, CRA)
 
@@ -163,10 +170,40 @@ expandMostLk <- function(X, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL
 ###########################################
 compileMostLk <- function(Y, dict, freq, CRA=c("mean", "CRA"), thr=0.95, grp=NULL){
   require(foreach)
+  require(dplyr)
   temp <- foreach(x=1:dim(Y)[1], .combine=rbind) %do% {y <- expandMostLk(Y[x,], dict, freq, CRA=CRA, thr=thr, grp=grp); cbind("IND"=Y[x,"IND"], y$tmat,"p"=y$p)}
   y <- list()
   y$IND <- temp$IND
   y$tmat <- apply(temp[,setdiff(colnames(temp), c("IND","p"))], c(1,2), as.character)
   y$p <- temp$p
   return(y)
+}
+
+###########################################
+#'@export
+###########################################
+anonymise <- function(typing, CRA=F){
+  k <- typing$IND
+  c <- NULL
+  if(("CRA" %in% colnames(typing)) & CRA){
+    r <- formatC(typing$CRA, width = 2, flag="0")
+    r[r=="NA"] <- "00"
+  } else {
+    if("CRA" %in% colnames(typing)){
+      c <- typing$CRA
+    }
+    typing <- typing[,setdiff(colnames(typing), "CRA")]
+    r <- rep("", dim(typing)[1])
+  }
+  w <- ceiling(log10(length(r)+1))
+  r <- paste0(r, formatC(1:length(r), width = w, flag="0"))
+  names(k) <- r
+  typing$IND <- r
+  rownames(typing) <- r
+  res <- list("typing"=typing, "key"=k)
+  if(!is.null(c)){
+    names(c) <- r
+    res[["CRA"]] <- c
+  }
+  return(res)
 }
