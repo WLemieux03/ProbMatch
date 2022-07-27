@@ -33,8 +33,8 @@ MMcomp <- function(p, d, type=c("both", "GvH", "HvG"), ignore.null=T){
   if(length(p)!=length(d)){stop("not same number of loci!")}
   type <- match.arg(type, several.ok=T)
   if(ignore.null){
-    p[grepl("\\d{2,4}:\\d{2,4}N", p)] <- NA
-    d[grepl("\\d{2,4}:\\d{2,4}N", d)] <- NA
+    p[grepl("\\d{2,4}:\\d{2,4}N|^0$", p)] <- NA
+    d[grepl("\\d{2,4}:\\d{2,4}N|^0$", d)] <- NA
   }
 
   mp <- pairsum(!p %in% d & !is.na(p))
