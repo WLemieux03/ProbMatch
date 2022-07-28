@@ -77,3 +77,13 @@ recomp.matchOpt <- function(genoX, N, avail=1){
   }))
   return(P)
 }
+
+###########################################
+#'@export
+###########################################
+max.matchOpt <- function(genoX){
+  P <- sum(apply(genoX, 1, function(x){
+    as.integer(x[["k"]])*as.numeric(x[["freq"]])*(as.numeric(x[["p"]])!=0)
+  }))
+  return(P)
+}
