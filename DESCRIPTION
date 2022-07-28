@@ -1,7 +1,7 @@
 Package: ProbMatch
 Type: Package
 Title: Faster subroutine for allele matching
-Version: 1.3.1
+Version: 1.3.2
 Date: 2022-07-28
 Authors@R: c(person("William","Lemieux",role=c("aut","cre"),email="william.lemieux@hema-quebec.qc.ca"),
             c(person("Antoine", "Lewin", role=c("ctb"))))

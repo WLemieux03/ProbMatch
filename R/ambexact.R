@@ -12,20 +12,8 @@ exact.donorsMostLk <- function(X, Y, dict, freqX, freqY, match='8/8', type=c("Gv
   sel <- switch(match[2], '8'=c('A','B','C','DRB1'), '10'=c('A','B','C','DRB1','DQB1'),
                 '12'=c('A','B','C','DRB1','DQB1','DPB1'))
 
-  i=1; blnk=T; while(blnk){L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(X[i,1], '~')));
-  blnk <- "blank" %in% L; i<-i+1}
-  X <- cbind(colsplit(X$alleles, '~', L), freq=X[,2])
-  X <- X[X$freq!=0,]
-  X <- as.data.frame(summarise_at(group_by(X[,c(sel,'freq')], X[,sel]), vars(freq), ~ sum(.,na.rm=TRUE)))
-  X <- data.frame(alleles=apply(X[,sel], 1, paste, collapse="~"), freq=X$freq)
   x <- compileMostLk(X, dict, freqX, CRA=CRA, thr=thrX, grp=grp)
 
-  i=1; blnk=T; while(blnk){L <- sub("^([^\\*]+)\\*[^\\*]+", "\\1", unlist(strsplit(Y[i,1], '~')));
-  blnk <- "blank" %in% LY; i<-i+1}
-  Y <- cbind(colsplit(Y$alleles, '~', LY), freq=Y[,2])
-  Y <- Y[Y$freq!=0,]
-  Y <- as.data.frame(summarise_at(group_by(Y[,c(sel,'freq')], Y[,sel]), vars(freq), ~ sum(.,na.rm=TRUE)))
-  Y <- data.frame(alleles=apply(Y[,sel], 1, paste, collapse="~"), freq=Y$freq)
   y <- compileMostLk(Y, dict, freqY, CRA=CRA, thr=thrY, grp=grp)
 
   n <- dim(x$tmat)[1]
